@@ -1,0 +1,409 @@
+.stack {
+  position: relative;
+  display: grid;
+  gap: var(--space-3);
+}
+
+/* Cards that are still waiting for their cue keep their space but stay out of
+   sight and out of the accessibility tree. */
+.stack [data-revealed='false'] {
+  visibility: hidden;
+}
+
+/* --- shared card shell ---------------------------------------------------- */
+
+.card,
+.verdictCard,
+.adviceCard {
+  border: 1px solid var(--color-border);
+  border-radius: var(--radius-card);
+  background: linear-gradient(180deg, rgb(23 26 32 / 0.97), rgb(18 21 26 / 0.97));
+  box-shadow: var(--shadow-card);
+}
+
+.card {
+  padding: var(--space-5) var(--space-4) var(--space-4);
+}
+
+.cardHead {
+  display: grid;
+  gap: 0.125rem;
+}
+
+.cardTitle {
+  font-size: var(--text-title);
+  font-weight: 700;
+  line-height: var(--leading-title);
+  letter-spacing: -0.01em;
+}
+
+.cardHint {
+  color: var(--color-text-muted);
+  font-size: var(--text-xs);
+  line-height: 1.8;
+}
+
+/* --- goal chips ----------------------------------------------------------- */
+
+.chips {
+  display: flex;
+  flex-wrap: wrap;
+  gap: var(--space-2);
+  margin-block-start: var(--space-4);
+}
+
+.chip {
+  min-height: 2.25rem;
+  padding-inline: var(--space-3);
+  padding-block: var(--space-2);
+  border: 1px solid var(--color-border-strong);
+  border-radius: var(--radius-chip);
+  background: rgb(255 255 255 / 0.02);
+  color: var(--color-text-secondary);
+  font-size: var(--text-sm);
+  line-height: 1.4;
+  cursor: pointer;
+  transition:
+    color var(--duration-base) var(--ease-out),
+    border-color var(--duration-base) var(--ease-out),
+    background-color var(--duration-base) var(--ease-out),
+    transform var(--duration-fast) var(--ease-out);
+}
+
+.chip:hover {
+  color: var(--color-text);
+  border-color: rgb(241 240 236 / 0.22);
+}
+
+.chip:active {
+  transform: scale(0.96);
+}
+
+.chip[aria-pressed='true'] {
+  color: #fff;
+  border-color: rgb(210 77 97 / 0.7);
+  background: var(--color-accent);
+  box-shadow: var(--shadow-accent);
+}
+
+/* --- result area ---------------------------------------------------------- */
+
+.resultArea {
+  position: relative;
+  /* Space is reserved for the tallest answer in the set (two-line title),
+     measured in-browser, so idle → loading → success never shifts and
+     switching goals never resizes the card. */
+  min-height: 10.25rem;
+  margin-block-start: var(--space-4);
+  padding-block-start: var(--space-4);
+  border-block-start: 1px solid var(--color-border);
+}
+
+.placeholder {
+  color: var(--color-text-muted);
+  font-size: var(--text-sm);
+  line-height: 1.9;
+}
+
+.loadingBar {
+  position: absolute;
+  inset-inline: 0;
+  inset-block-start: 0;
+  z-index: 1;
+  display: block;
+  height: 2px;
+  border-radius: 2px;
+  background: rgb(241 240 236 / 0.08);
+  overflow: hidden;
+}
+
+.loadingBar i {
+  display: block;
+  width: 38%;
+  height: 100%;
+  border-radius: 2px;
+  background: linear-gradient(90deg, transparent, var(--color-accent-hi), transparent);
+  animation: sweep 1.1s var(--ease-soft) infinite;
+}
+
+@keyframes sweep {
+  from {
+    transform: translateX(160%);
+  }
+  to {
+    transform: translateX(-260%);
+  }
+}
+
+.result {
+  transition:
+    opacity var(--duration-slow) var(--ease-out),
+    filter var(--duration-slow) var(--ease-out);
+}
+
+.result[data-stale='true'] {
+  opacity: 0.28;
+  filter: saturate(0.6);
+}
+
+.resultHead {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: var(--space-4);
+}
+
+.resultHeadText {
+  min-width: 0;
+}
+
+.resultLabel {
+  color: var(--color-text-muted);
+  font-size: var(--text-xs);
+  line-height: 1.7;
+}
+
+.resultTitle {
+  margin-block-start: 0.125rem;
+  font-size: var(--text-body);
+  font-weight: 700;
+  line-height: var(--leading-title);
+  text-wrap: pretty;
+}
+
+/* --- match dial ----------------------------------------------------------- */
+
+.match {
+  position: relative;
+  flex: none;
+  display: grid;
+  place-items: center;
+  width: 3.875rem;
+  height: 3.875rem;
+  text-align: center;
+}
+
+.matchDial {
+  position: absolute;
+  inset: 0;
+  width: 100%;
+  height: 100%;
+  rotate: -90deg;
+}
+
+.matchTrack,
+.matchValue {
+  fill: none;
+  stroke-width: 2.5;
+  stroke-linecap: round;
+}
+
+.matchTrack {
+  stroke: rgb(241 240 236 / 0.08);
+}
+
+.matchValue {
+  stroke: var(--color-accent-hi);
+  stroke-dasharray: var(--dial-length);
+  animation: dial calc(var(--duration-cinema) * 1.2) var(--ease-soft) both;
+}
+
+@keyframes dial {
+  from {
+    stroke-dashoffset: var(--dial-length);
+  }
+  to {
+    stroke-dashoffset: var(--dial-offset);
+  }
+}
+
+.matchNumber {
+  font-size: 0.875rem;
+  font-weight: 700;
+  line-height: 1.2;
+}
+
+.matchCaption {
+  color: var(--color-text-muted);
+  font-size: 0.625rem;
+  line-height: 1.2;
+}
+
+.resultMeta {
+  margin-block-start: var(--space-3);
+  color: var(--color-text-secondary);
+  font-size: var(--text-xs);
+}
+
+.reasons {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.4375rem;
+  margin-block-start: var(--space-3);
+}
+
+.reason {
+  padding-inline: var(--space-3);
+  padding-block: 0.3125rem;
+  border: 1px solid var(--color-border);
+  border-radius: var(--radius-chip);
+  background: rgb(255 255 255 / 0.015);
+  color: var(--color-text-secondary);
+  font-size: var(--text-2xs);
+  line-height: 1.5;
+}
+
+/* --- verdict card --------------------------------------------------------- */
+
+.floating {
+  margin-inline-start: var(--space-4);
+}
+
+.verdictCard {
+  padding: var(--space-4);
+  background: linear-gradient(180deg, rgb(26 30 38 / 0.97), rgb(20 23 29 / 0.97));
+}
+
+.verdictTitle {
+  font-size: var(--text-body);
+  font-weight: 700;
+  line-height: var(--leading-title);
+}
+
+.scores {
+  display: grid;
+  gap: var(--space-3);
+  margin-block-start: var(--space-3);
+}
+
+.scoreRow {
+  display: grid;
+  grid-template-columns: 1fr auto;
+  align-items: baseline;
+  gap: 0.25rem var(--space-3);
+  font-size: var(--text-sm);
+}
+
+.scoreLabel {
+  color: var(--color-text-secondary);
+}
+
+.scoreValue {
+  margin: 0;
+  font-weight: 700;
+  font-variant-numeric: tabular-nums;
+}
+
+.scoreValue small {
+  color: var(--color-text-muted);
+  font-weight: 500;
+  font-size: var(--text-2xs);
+}
+
+.scoreBar {
+  grid-column: 1 / -1;
+  height: 2px;
+  border-radius: 2px;
+  background: rgb(241 240 236 / 0.07);
+  overflow: hidden;
+}
+
+.scoreBar i {
+  display: block;
+  width: var(--value, 0%);
+  height: 100%;
+  border-radius: 2px;
+  background: linear-gradient(90deg, rgb(200 71 89 / 0.5), var(--color-accent-hi));
+  transform: scaleX(0);
+  transform-origin: right center;
+  transition:
+    transform calc(var(--duration-cinema) * 1.1) var(--ease-soft),
+    width var(--duration-slow) var(--ease-out);
+}
+
+.scoreBar[data-active='true'] i {
+  transform: none;
+}
+
+.scoreRowPlain {
+  padding-block-start: var(--space-2);
+  border-block-start: 1px solid var(--color-border);
+}
+
+/* --- advice card ---------------------------------------------------------- */
+
+.floatingAdvice {
+  margin-inline-end: var(--space-6);
+}
+
+.adviceCard {
+  position: relative;
+  padding: var(--space-4);
+  border-color: rgb(200 71 89 / 0.2);
+}
+
+.adviceCard::before {
+  content: '';
+  position: absolute;
+  inset-block: var(--space-4);
+  inset-inline-end: -1px;
+  width: 2px;
+  border-radius: 2px;
+  background: linear-gradient(180deg, transparent, var(--color-accent), transparent);
+}
+
+.adviceTitle {
+  color: var(--color-accent-text);
+  font-size: var(--text-xs);
+  font-weight: 700;
+  line-height: 1.8;
+}
+
+.adviceText {
+  margin-block-start: 0.375rem;
+  font-size: var(--text-body);
+  line-height: 1.85;
+  text-wrap: pretty;
+}
+
+.adviceWhy {
+  margin-block-start: 0.25rem;
+  color: var(--color-text-muted);
+  font-size: var(--text-xs);
+  line-height: 1.85;
+}
+
+/* --- desktop: cards overlap into a deliberate stack ----------------------- */
+
+@media (min-width: 64rem) {
+  .card {
+    padding: var(--space-5) var(--space-5) var(--space-4);
+  }
+
+  .resultArea {
+    min-height: 10rem;
+  }
+
+  /* The three cards read as one deck: each floats a little over the one
+     above it, offset to alternating sides. The overlap stays smaller than
+     the card's own padding, so nothing readable is ever covered. */
+  .floating {
+    margin-inline: var(--space-8) calc(var(--space-4) * -1);
+    margin-block-start: calc(var(--space-8) * -1);
+    box-shadow: var(--shadow-float);
+  }
+
+  .floatingAdvice {
+    margin-inline: calc(var(--space-3) * -1) var(--space-10);
+    margin-block-start: calc(var(--space-8) * -1);
+  }
+
+  .verdictCard .scores {
+    gap: var(--space-2);
+    margin-block-start: var(--space-2);
+  }
+
+  .adviceCard {
+    padding: var(--space-3) var(--space-4);
+  }
+}

@@ -1,0 +1,133 @@
+.field {
+  position: fixed;
+  inset: 0;
+  z-index: 0;
+  pointer-events: none;
+  overflow: hidden;
+  background:
+    radial-gradient(120% 68% at 50% -12%, #12151b 0%, var(--color-bg-2) 44%, var(--color-bg) 100%);
+}
+
+/* --- depth planes --------------------------------------------------------- */
+
+.plane {
+  position: absolute;
+  inset-inline: 0;
+  display: flex;
+  align-items: center;
+  gap: var(--space-3);
+  padding-inline: clamp(0.5rem, 2vw, 2rem);
+  opacity: 0;
+  transform: scaleX(0.65);
+  transform-origin: center;
+  transition:
+    opacity calc(var(--duration-cinema) * 1.6) var(--ease-out),
+    transform calc(var(--duration-cinema) * 2) var(--ease-out);
+}
+
+.plane[data-index='0'] {
+  top: 23%;
+  transition-delay: 60ms;
+}
+
+.plane[data-index='1'] {
+  top: 50%;
+  transition-delay: 340ms;
+}
+
+.plane[data-index='2'] {
+  top: 77%;
+  transition-delay: 200ms;
+}
+
+.field[data-lit='true'] .plane {
+  opacity: 1;
+  transform: none;
+}
+
+.line {
+  flex: 1;
+  height: 1px;
+  background: linear-gradient(
+    90deg,
+    transparent 0%,
+    rgb(241 240 236 / 0.06) 24%,
+    rgb(241 240 236 / 0.09) 50%,
+    rgb(241 240 236 / 0.06) 76%,
+    transparent 100%
+  );
+}
+
+.label {
+  flex: none;
+  color: var(--color-text-muted);
+  font-size: var(--text-2xs);
+  line-height: 1;
+  opacity: 0.55;
+  /* keep «−۱» / «−۲» from being reordered by bidi */
+  direction: ltr;
+  unicode-bidi: isolate;
+  transition: color var(--duration-cinema) var(--ease-out);
+}
+
+/* --- the −۱ plane is the one that carries light --------------------------- */
+
+.field[data-accented='true'] .plane[data-index='1'] .line {
+  background: linear-gradient(
+    90deg,
+    transparent 0%,
+    rgb(200 71 89 / 0.16) 26%,
+    rgb(210 77 97 / 0.42) 50%,
+    rgb(200 71 89 / 0.16) 74%,
+    transparent 100%
+  );
+}
+
+.field[data-accented='true'] .plane[data-index='1'] .label {
+  color: var(--color-accent-text);
+  opacity: 1;
+}
+
+.glow {
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  width: min(34rem, 96vw);
+  height: 20rem;
+  translate: -50% -50%;
+  background: radial-gradient(50% 50% at 50% 50%, rgb(200 71 89 / 0.14), transparent 72%);
+  opacity: 0;
+  transition: opacity calc(var(--duration-cinema) * 2.2) var(--ease-out) 400ms;
+}
+
+.field[data-accented='true'] .glow {
+  opacity: 1;
+  /* the only permanent motion on the page: a very slow breath */
+  animation: breathe 19s var(--ease-soft) infinite;
+}
+
+@keyframes breathe {
+  0%,
+  100% {
+    opacity: 0.82;
+    transform: translate3d(0, 0, 0) scale(1);
+  }
+  50% {
+    opacity: 1;
+    transform: translate3d(0, -0.75rem, 0) scale(1.04);
+  }
+}
+
+.grain {
+  position: absolute;
+  inset: 0;
+  opacity: 0.14;
+  mix-blend-mode: overlay;
+  background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='160' height='160'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='.85' numOctaves='3'/%3E%3C/filter%3E%3Crect width='160' height='160' filter='url(%23n)' opacity='.5'/%3E%3C/svg%3E");
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .field[data-accented='true'] .glow {
+    animation: none;
+  }
+}

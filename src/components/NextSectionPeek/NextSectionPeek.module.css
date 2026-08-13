@@ -1,0 +1,109 @@
+.section {
+  position: relative;
+  z-index: 1;
+  width: min(100%, var(--content-max));
+  margin-inline: auto;
+  padding-inline: var(--gutter);
+  padding-block: var(--space-6) var(--space-10);
+  padding-block-end: max(var(--space-10), env(safe-area-inset-bottom));
+  border-block-start: 1px solid var(--color-border);
+}
+
+.heading {
+  font-size: var(--text-title);
+  font-weight: 700;
+  line-height: var(--leading-title);
+}
+
+.rail {
+  display: grid;
+  grid-auto-flow: column;
+  grid-auto-columns: 63%;
+  gap: var(--space-3);
+  margin-block-start: var(--space-4);
+  padding-block-end: var(--space-2);
+  overflow-x: auto;
+  overscroll-behavior-inline: contain;
+  scroll-snap-type: x mandatory;
+  scrollbar-width: none;
+  /* the trailing card stays half-lit: an invitation, not a wall */
+  mask-image: linear-gradient(270deg, #000 68%, rgb(0 0 0 / 0.22) 100%);
+}
+
+.rail::-webkit-scrollbar {
+  display: none;
+}
+
+.course {
+  scroll-snap-align: end;
+  display: grid;
+  align-content: start;
+  gap: var(--space-2);
+  height: 100%;
+  padding: var(--space-4);
+  border: 1px solid var(--color-border);
+  border-radius: var(--radius-card-sm);
+  background: var(--color-surface);
+  transition:
+    transform var(--duration-base) var(--ease-out),
+    border-color var(--duration-base) var(--ease-out);
+}
+
+.course:hover {
+  transform: translateY(-3px);
+  border-color: var(--color-border-strong);
+}
+
+.topic {
+  justify-self: start;
+  padding-inline: var(--space-2);
+  padding-block: 0.1875rem;
+  border-radius: var(--radius-chip);
+  background: var(--color-accent-soft);
+  color: var(--color-accent-text);
+  font-size: var(--text-2xs);
+  line-height: 1.6;
+}
+
+.courseTitle {
+  font-size: var(--text-sm);
+  font-weight: 600;
+  line-height: var(--leading-title);
+  text-wrap: pretty;
+}
+
+.courseMeta {
+  color: var(--color-text-muted);
+  font-size: var(--text-xs);
+}
+
+.courseScore {
+  font-size: var(--text-sm);
+  font-weight: 700;
+  font-variant-numeric: tabular-nums;
+}
+
+.courseScore small {
+  color: var(--color-text-muted);
+  font-weight: 500;
+  font-size: var(--text-2xs);
+}
+
+@media (min-width: 48rem) {
+  .rail {
+    grid-auto-columns: minmax(0, 1fr);
+    mask-image: none;
+  }
+}
+
+@media (min-width: 64rem) {
+  .section {
+    padding-block-start: var(--space-5);
+  }
+}
+
+@media (min-width: 64rem) and (max-height: 50rem) {
+  .section {
+    padding-block-start: var(--space-4);
+  }
+}
