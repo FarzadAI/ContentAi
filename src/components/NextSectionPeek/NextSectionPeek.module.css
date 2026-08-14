@@ -1,0 +1,80 @@
+.section {
+  position: relative;
+  z-index: 1;
+  width: min(100%, var(--content-max));
+  margin-inline: auto;
+  padding-inline: var(--gutter);
+  padding-block: var(--space-6) var(--space-10);
+  border-block-start: 1px solid var(--color-border);
+}
+
+.head {
+  display: flex;
+  align-items: baseline;
+  justify-content: space-between;
+  gap: var(--space-4);
+}
+
+.heading {
+  font-size: var(--text-title);
+  font-weight: 700;
+  line-height: var(--leading-title);
+}
+
+.more {
+  flex: none;
+  color: var(--color-text-secondary);
+  font-size: var(--text-sm);
+  text-decoration: none;
+  white-space: nowrap;
+  transition: color var(--duration-base) var(--ease-out);
+}
+
+.more:hover {
+  color: var(--color-accent-text);
+}
+
+.rail {
+  display: grid;
+  grid-auto-flow: column;
+  grid-auto-columns: 63%;
+  gap: var(--space-3);
+  margin-block-start: var(--space-4);
+  padding-block-end: var(--space-2);
+  overflow-x: auto;
+  overscroll-behavior-inline: contain;
+  scroll-snap-type: x mandatory;
+  scrollbar-width: none;
+  /* the trailing card stays half-lit: an invitation, not a wall */
+  mask-image: linear-gradient(270deg, #000 68%, rgb(0 0 0 / 0.22) 100%);
+}
+
+.rail::-webkit-scrollbar {
+  display: none;
+}
+
+.railItem {
+  scroll-snap-align: end;
+}
+
+@media (min-width: 48rem) {
+  .rail {
+    grid-auto-flow: row;
+    grid-template-columns: repeat(3, minmax(0, 1fr));
+    grid-auto-columns: auto;
+    overflow-x: visible;
+    mask-image: none;
+  }
+}
+
+@media (min-width: 64rem) {
+  .section {
+    padding-block-start: var(--space-5);
+  }
+}
+
+@media (min-width: 64rem) and (max-height: 50rem) {
+  .section {
+    padding-block-start: var(--space-4);
+  }
+}

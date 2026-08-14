@@ -1,0 +1,17 @@
+node_modules
+dist
+coverage
+.vite
+*.local
+
+# Playwright
+playwright-report
+test-results
+e2e/__screenshots__/*-actual.png
+e2e/__screenshots__/*-diff.png
+
+# Editors / OS
+.DS_Store
+.idea
+.vscode/*
+!.vscode/extensions.json

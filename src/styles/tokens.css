@@ -1,0 +1,107 @@
+/* ==========================================================================
+   Design tokens — طبقه منفی یک
+   Single source of truth for color, space, radius, elevation, type, motion.
+   Components must not hard-code raw values; they consume these tokens.
+   ========================================================================== */
+
+:root {
+  color-scheme: dark;
+
+  /* --- Color: surfaces ---------------------------------------------------- */
+  --color-bg: #090a0d;
+  --color-bg-2: #0d0f13;
+  --color-surface: #14171d;
+  --color-surface-elevated: #171a20;
+
+  /* --- Color: text -------------------------------------------------------- */
+  --color-text: #f1f0ec;
+  --color-text-secondary: #9a9fa9;
+  /* Brief suggests #717680; measured at 3.7:1 on elevated surfaces, which
+     fails WCAG AA for the small sizes it is used at. Lifted to the nearest
+     tone that clears 4.5:1 everywhere while staying clearly "muted". */
+  --color-text-muted: #868c97;
+
+  /* --- Color: accent ------------------------------------------------------ */
+  --color-accent: #c84759;
+  --color-accent-hi: #d24d61;
+  /* Accent used as small text needs more headroom than accent used as a fill. */
+  --color-accent-text: #e2687b;
+  --color-accent-soft: rgb(200 71 89 / 0.13);
+  --color-accent-line: rgb(200 71 89 / 0.34);
+
+  /* --- Color: lines ------------------------------------------------------- */
+  --color-border: rgb(241 240 236 / 0.07);
+  --color-border-strong: rgb(241 240 236 / 0.12);
+  --color-focus: #e2687b;
+
+  /* --- Spacing scale (4px base) ------------------------------------------- */
+  --space-1: 0.25rem;
+  --space-2: 0.5rem;
+  --space-3: 0.75rem;
+  --space-4: 1rem;
+  --space-5: 1.25rem;
+  --space-6: 1.5rem;
+  --space-8: 2rem;
+  --space-10: 2.5rem;
+  --space-12: 3rem;
+  --space-16: 4rem;
+
+  /* Page gutter grows with the viewport but never collapses on 320px */
+  --gutter: clamp(1.125rem, 0.85rem + 1.4vw, 2.5rem);
+  --content-max: 78rem;
+
+  /* --- Radius ------------------------------------------------------------- */
+  --radius-chip: 999px;
+  --radius-button: 0.875rem;
+  --radius-card-sm: 1rem;
+  --radius-card: 1.375rem;
+
+  /* --- Elevation ---------------------------------------------------------- */
+  --shadow-card: 0 1.75rem 3.5rem -2rem rgb(0 0 0 / 0.85);
+  --shadow-float: 0 2.25rem 4.5rem -2.25rem rgb(0 0 0 / 0.95);
+  --shadow-accent: 0 1rem 2.125rem -1.25rem rgb(200 71 89 / 0.95);
+
+  /* --- Typography --------------------------------------------------------- */
+  --font-sans: 'Vazirmatn', 'Peyda', 'Estedad', 'IRANSansX', 'Segoe UI', Tahoma, system-ui,
+    sans-serif;
+
+  /* mobile ~36–44px · desktop ~56–72px */
+  --text-display: clamp(2.25rem, 1.2rem + 4.55vw, 4.5rem);
+  --text-title: clamp(1.125rem, 1.02rem + 0.46vw, 1.5rem);
+  --text-lead: clamp(0.9375rem, 0.88rem + 0.26vw, 1.125rem);
+  --text-body: 0.9375rem;
+  --text-sm: 0.8125rem;
+  --text-xs: 0.75rem;
+  --text-2xs: 0.6875rem;
+
+  /* Persian needs more leading than Latin at the same size */
+  --leading-display: 1.32;
+  --leading-title: 1.6;
+  --leading-body: 2;
+  --leading-tight: 1.5;
+
+  --tracking-display: -0.02em;
+
+  /* --- Motion ------------------------------------------------------------- */
+  --duration-fast: 180ms;
+  --duration-base: 320ms;
+  --duration-slow: 620ms;
+  --duration-cinema: 900ms;
+
+  --ease-out: cubic-bezier(0.22, 0.61, 0.36, 1);
+  --ease-soft: cubic-bezier(0.33, 0.1, 0.2, 1);
+
+  /* --- Layout ------------------------------------------------------------- */
+  --header-height: 3.75rem;
+}
+
+/* Motion tokens collapse when the user asks for less movement.
+   Everything that animates reads these, so one switch disarms the whole page. */
+@media (prefers-reduced-motion: reduce) {
+  :root {
+    --duration-fast: 1ms;
+    --duration-base: 1ms;
+    --duration-slow: 1ms;
+    --duration-cinema: 1ms;
+  }
+}

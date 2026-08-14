@@ -1,0 +1,31 @@
+.panel {
+  margin-block-start: var(--space-6);
+}
+
+.results {
+  display: grid;
+  gap: var(--space-4);
+  /* Reserved so switching goals never resizes the panel. */
+  min-height: 26rem;
+  margin-block-start: var(--space-5);
+  padding-block-start: var(--space-5);
+  border-block-start: 1px solid var(--color-border);
+}
+
+.side {
+  display: grid;
+  gap: var(--space-3);
+  align-content: start;
+}
+
+@media (min-width: 56rem) {
+  .results {
+    grid-template-columns: minmax(0, 1fr) minmax(0, 1fr);
+    align-items: start;
+    min-height: 20rem;
+  }
+
+  .primary {
+    align-self: stretch;
+  }
+}
