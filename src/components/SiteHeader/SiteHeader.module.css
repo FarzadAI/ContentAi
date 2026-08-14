@@ -1,6 +1,12 @@
 .header {
-  position: relative;
-  z-index: 3;
+  position: sticky;
+  top: 0;
+  z-index: 20;
+  background: linear-gradient(180deg, rgb(9 10 13 / 0.88), rgb(9 10 13 / 0.55) 70%, transparent);
+  backdrop-filter: blur(14px);
+}
+
+.bar {
   display: flex;
   align-items: center;
   justify-content: space-between;
@@ -55,10 +61,13 @@
 .navList {
   display: flex;
   align-items: center;
-  gap: clamp(var(--space-4), 1.6vw, var(--space-6));
+  gap: clamp(var(--space-3), 1.4vw, var(--space-5));
 }
 
 .navLink {
+  position: relative;
+  display: inline-block;
+  padding-block: var(--space-2);
   color: var(--color-text-secondary);
   font-size: var(--text-sm);
   text-decoration: none;
@@ -68,6 +77,20 @@
 
 .navLink:hover {
   color: var(--color-text);
+}
+
+.navLinkActive {
+  color: var(--color-text);
+}
+
+.navLinkActive::after {
+  content: '';
+  position: absolute;
+  inset-inline: 0;
+  bottom: 0.125rem;
+  height: 2px;
+  border-radius: 2px;
+  background: var(--color-accent);
 }
 
 /* --- actions -------------------------------------------------------------- */
@@ -109,8 +132,7 @@
   height: 1.1875rem;
 }
 
-/* search is desktop-only, menu is mobile-only */
-.iconButton:not([data-mobile-only]):first-child {
+.iconButton[data-desktop-only] {
   display: none;
 }
 
@@ -135,8 +157,72 @@
   transform: translateY(-1px);
 }
 
+/* --- mobile drawer -------------------------------------------------------- */
+
+/* The `hidden` attribute has to beat this rule, or the drawer renders open. */
+.drawer[hidden] {
+  display: none;
+}
+
+.drawer {
+  display: grid;
+  gap: var(--space-4);
+  padding: var(--space-4) var(--gutter) var(--space-6);
+  border-block-start: 1px solid var(--color-border);
+  background: rgb(13 15 19 / 0.97);
+  backdrop-filter: blur(18px);
+  animation: drawer-in var(--duration-base) var(--ease-out);
+}
+
+@keyframes drawer-in {
+  from {
+    opacity: 0;
+    transform: translateY(-8px);
+  }
+}
+
+.drawerList {
+  display: grid;
+  gap: var(--space-1);
+}
+
+.drawerLink {
+  display: block;
+  padding-block: var(--space-3);
+  padding-inline: var(--space-2);
+  border-radius: var(--radius-button);
+  color: var(--color-text-secondary);
+  font-size: var(--text-lead);
+  text-decoration: none;
+}
+
+.drawerLink:hover {
+  color: var(--color-text);
+  background: rgb(255 255 255 / 0.03);
+}
+
+.drawerLinkActive {
+  color: var(--color-text);
+  background: var(--color-accent-soft);
+}
+
+.drawerCta {
+  min-height: 2.875rem;
+  border-radius: var(--radius-button);
+  background: var(--color-accent);
+  color: #fff;
+  font-size: var(--text-lead);
+  font-weight: 600;
+  cursor: pointer;
+  box-shadow: var(--shadow-accent);
+}
+
+.drawerCta:hover {
+  background: var(--color-accent-hi);
+}
+
 @media (min-width: 64rem) {
-  .header {
+  .bar {
     padding-block: var(--space-2);
   }
 
@@ -148,7 +234,7 @@
     display: none;
   }
 
-  .iconButton:not([data-mobile-only]):first-child {
+  .iconButton[data-desktop-only] {
     display: grid;
   }
 
@@ -159,5 +245,15 @@
 
   .headerCta {
     display: inline-block;
+  }
+
+  .drawer {
+    display: none;
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .drawer {
+    animation: none;
   }
 }

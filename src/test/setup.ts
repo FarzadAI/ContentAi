@@ -16,6 +16,9 @@ export function setReducedMotion(value: boolean) {
 beforeEach(() => {
   reducedMotion = true;
 
+  // HashRouter navigations mutate window.location; every test starts at «/».
+  if (window.location.hash !== '') window.location.hash = '';
+
   vi.stubGlobal(
     'matchMedia',
     (query: string): MediaQueryList =>
@@ -31,8 +34,9 @@ beforeEach(() => {
       }) as unknown as MediaQueryList,
   );
 
-  // jsdom does not implement scrollIntoView
+  // jsdom implements neither of these
   Element.prototype.scrollIntoView = vi.fn();
+  window.scrollTo = vi.fn();
 });
 
 afterEach(() => {

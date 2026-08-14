@@ -1,39 +1,37 @@
-import { useCallback } from 'react';
-import { HeroSection } from './components/Hero/HeroSection';
-import { LevelBackground } from './components/LevelBackground/LevelBackground';
-import { NextSectionPeek } from './components/NextSectionPeek/NextSectionPeek';
-import { SiteHeader } from './components/SiteHeader/SiteHeader';
+import { HashRouter, Route, Routes } from 'react-router-dom';
+import { AppLayout } from './components/layout/AppLayout';
 import { IntroProvider } from './intro/IntroProvider';
+import ComparePage from './pages/ComparePage';
+import CoursesPage from './pages/CoursesPage';
+import DiscoverPage from './pages/DiscoverPage';
+import FreePage from './pages/FreePage';
+import GroupBuyPage from './pages/GroupBuyPage';
+import HomePage from './pages/HomePage';
+import NotFoundPage from './pages/NotFoundPage';
+import PathsPage from './pages/PathsPage';
+import { ROUTES } from './routes';
 
 /**
- * Brings the user to the recommendation surface and hands them the controls.
- * TODO(product): swap for the full recommendation wizard (route or modal)
- * once it exists — the CTA contract stays the same.
+ * Hash routing keeps the site deployable as plain static files — no server
+ * rewrite rules, and it survives being embedded or opened from a file path.
  */
-function focusGoalChips() {
-  const chips = document.getElementById('goal-chips');
-  const preview = document.getElementById('recommendation-preview');
-
-  preview?.scrollIntoView({ behavior: 'smooth', block: 'center' });
-  chips?.querySelector('button')?.focus({ preventScroll: true });
-}
-
-function scrollToWeeklyPicks() {
-  document.getElementById('weekly-heading')?.scrollIntoView({ behavior: 'smooth', block: 'start' });
-}
-
 export default function App() {
-  const onPrimaryAction = useCallback(() => focusGoalChips(), []);
-  const onSecondaryAction = useCallback(() => scrollToWeeklyPicks(), []);
-
   return (
     <IntroProvider>
-      <LevelBackground />
-      <SiteHeader onPrimaryAction={onPrimaryAction} />
-      <main>
-        <HeroSection onPrimaryAction={onPrimaryAction} onSecondaryAction={onSecondaryAction} />
-        <NextSectionPeek />
-      </main>
+      <HashRouter>
+        <Routes>
+          <Route element={<AppLayout />}>
+            <Route path={ROUTES.home} element={<HomePage />} />
+            <Route path={ROUTES.discover} element={<DiscoverPage />} />
+            <Route path={ROUTES.paths} element={<PathsPage />} />
+            <Route path={ROUTES.courses} element={<CoursesPage />} />
+            <Route path={ROUTES.groupBuy} element={<GroupBuyPage />} />
+            <Route path={ROUTES.free} element={<FreePage />} />
+            <Route path={ROUTES.compare} element={<ComparePage />} />
+            <Route path="*" element={<NotFoundPage />} />
+          </Route>
+        </Routes>
+      </HashRouter>
     </IntroProvider>
   );
 }

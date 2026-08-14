@@ -17,8 +17,18 @@
 .adviceCard {
   border: 1px solid var(--color-border);
   border-radius: var(--radius-card);
-  background: linear-gradient(180deg, rgb(23 26 32 / 0.97), rgb(18 21 26 / 0.97));
+  /* Frosted, so the depth environment stays readable behind the deck. */
+  background: linear-gradient(180deg, rgb(23 26 32 / 0.84), rgb(18 21 26 / 0.88));
   box-shadow: var(--shadow-card);
+  backdrop-filter: blur(22px) saturate(118%);
+}
+
+@supports not (backdrop-filter: blur(1px)) {
+  .card,
+  .verdictCard,
+  .adviceCard {
+    background: linear-gradient(180deg, rgb(23 26 32 / 0.98), rgb(18 21 26 / 0.98));
+  }
 }
 
 .card {
@@ -261,7 +271,7 @@
 
 .verdictCard {
   padding: var(--space-4);
-  background: linear-gradient(180deg, rgb(26 30 38 / 0.97), rgb(20 23 29 / 0.97));
+  background: linear-gradient(180deg, rgb(26 30 38 / 0.86), rgb(20 23 29 / 0.9));
 }
 
 .verdictTitle {

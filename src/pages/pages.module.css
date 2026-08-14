@@ -1,0 +1,125 @@
+/* Shared page furniture: one rhythm across every sub-page. */
+
+.page {
+  position: relative;
+  z-index: 1;
+  width: min(100%, var(--content-max));
+  margin-inline: auto;
+  padding-inline: var(--gutter);
+  padding-block: var(--space-6) var(--space-10);
+}
+
+.section {
+  margin-block-start: var(--space-8);
+}
+
+.sectionTitle {
+  font-size: var(--text-title);
+  font-weight: 700;
+  line-height: var(--leading-title);
+}
+
+.sectionLead {
+  margin-block-start: var(--space-1);
+  max-width: 52ch;
+  color: var(--color-text-secondary);
+  font-size: var(--text-sm);
+  line-height: var(--leading-body);
+}
+
+.grid {
+  display: grid;
+  gap: var(--space-3);
+  margin-block-start: var(--space-4);
+  grid-template-columns: 1fr;
+}
+
+.filters {
+  display: flex;
+  flex-wrap: wrap;
+  gap: var(--space-2);
+  margin-block-start: var(--space-5);
+}
+
+.filter {
+  min-height: 2.25rem;
+  padding-inline: var(--space-3);
+  padding-block: var(--space-2);
+  border: 1px solid var(--color-border-strong);
+  border-radius: var(--radius-chip);
+  background: rgb(255 255 255 / 0.02);
+  color: var(--color-text-secondary);
+  font-size: var(--text-sm);
+  line-height: 1.4;
+  cursor: pointer;
+  transition:
+    color var(--duration-base) var(--ease-out),
+    border-color var(--duration-base) var(--ease-out),
+    background-color var(--duration-base) var(--ease-out),
+    transform var(--duration-fast) var(--ease-out);
+}
+
+.filter:hover {
+  color: var(--color-text);
+  border-color: rgb(241 240 236 / 0.22);
+}
+
+.filter:active {
+  transform: scale(0.96);
+}
+
+.filter[aria-pressed='true'] {
+  color: #fff;
+  border-color: rgb(210 77 97 / 0.7);
+  background: var(--color-accent);
+  box-shadow: var(--shadow-accent);
+}
+
+.count {
+  margin-block-start: var(--space-4);
+  color: var(--color-text-muted);
+  font-size: var(--text-xs);
+}
+
+.panel {
+  padding: var(--space-5) var(--space-4);
+  border: 1px solid var(--color-border);
+  border-radius: var(--radius-card);
+  background: rgb(20 23 29 / 0.84);
+  backdrop-filter: blur(20px);
+}
+
+@supports not (backdrop-filter: blur(1px)) {
+  .panel {
+    background: var(--color-surface);
+  }
+}
+
+.empty {
+  padding: var(--space-6) var(--space-4);
+  border: 1px dashed var(--color-border-strong);
+  border-radius: var(--radius-card);
+  color: var(--color-text-muted);
+  font-size: var(--text-sm);
+  text-align: center;
+}
+
+@media (min-width: 40rem) {
+  .grid {
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+  }
+}
+
+@media (min-width: 64rem) {
+  .page {
+    padding-block: var(--space-8) var(--space-12);
+  }
+
+  .grid {
+    grid-template-columns: repeat(3, minmax(0, 1fr));
+  }
+
+  .panel {
+    padding: var(--space-6);
+  }
+}

@@ -1,14 +1,147 @@
+/* The depth environment. Everything here is gradients + transforms:
+   GPU-friendly, no bitmaps, no layout work. */
+
 .field {
   position: fixed;
   inset: 0;
   z-index: 0;
   pointer-events: none;
   overflow: hidden;
+  perspective: 900px;
+  perspective-origin: 50% 42%;
   background:
-    radial-gradient(120% 68% at 50% -12%, #12151b 0%, var(--color-bg-2) 44%, var(--color-bg) 100%);
+    radial-gradient(125% 70% at 50% -14%, #13161d 0%, var(--color-bg-2) 46%, var(--color-bg) 100%);
+
+  --parallax-x: 0;
+  --parallax-y: 0;
+  --parallax-scroll: 0;
 }
 
-/* --- depth planes --------------------------------------------------------- */
+/* --- the room ------------------------------------------------------------- */
+
+.room {
+  position: absolute;
+  inset: 0;
+  transform-style: preserve-3d;
+  opacity: 0;
+  transition: opacity calc(var(--duration-cinema) * 2.2) var(--ease-out);
+  /* pointer parallax: a few degrees, never more */
+  transform: rotateY(calc(var(--parallax-x) * 1.1deg))
+    rotateX(calc(var(--parallax-y) * -0.7deg))
+    translate3d(0, calc(var(--parallax-scroll) * -22px), 0);
+  will-change: transform;
+}
+
+.field[data-lit='true'] .room {
+  opacity: 1;
+}
+
+.floor,
+.ceiling {
+  position: absolute;
+  inset-inline: -30%;
+  height: 62vh;
+  background:
+    linear-gradient(
+      to top,
+      rgb(255 255 255 / 0.045) 0%,
+      rgb(255 255 255 / 0.014) 34%,
+      transparent 72%
+    ),
+    repeating-linear-gradient(
+      90deg,
+      rgb(241 240 236 / 0.05) 0 1px,
+      transparent 1px 8.5%
+    );
+  mask-image: linear-gradient(to top, #000 4%, rgb(0 0 0 / 0.35) 46%, transparent 88%);
+}
+
+.floor {
+  bottom: -14vh;
+  transform: rotateX(76deg);
+  transform-origin: bottom center;
+}
+
+.ceiling {
+  top: -14vh;
+  transform: rotateX(-76deg);
+  transform-origin: top center;
+  opacity: 0.5;
+}
+
+.wall {
+  position: absolute;
+  inset-block: -18%;
+  width: 46vw;
+  background: rgb(255 255 255 / 0.026);
+  /* Blurred and faded on both axes: a wall reads as light falling off, never
+     as an edge. Each side masks toward the middle of the screen, so the two
+     walls stay symmetrical. */
+  mask-composite: intersect;
+  -webkit-mask-composite: source-in;
+  filter: blur(8px);
+}
+
+.wall[data-side='start'] {
+  right: -6vw;
+  transform: rotateY(-64deg);
+  transform-origin: right center;
+  mask-image:
+    linear-gradient(to left, #000 0%, transparent 82%),
+    linear-gradient(to bottom, transparent 0%, #000 28%, #000 72%, transparent 100%);
+}
+
+.wall[data-side='end'] {
+  left: -6vw;
+  transform: rotateY(64deg);
+  transform-origin: left center;
+  mask-image:
+    linear-gradient(to right, #000 0%, transparent 82%),
+    linear-gradient(to bottom, transparent 0%, #000 28%, #000 72%, transparent 100%);
+}
+
+/* Light rails along the floor — the one crimson gesture in the environment. */
+.rail {
+  position: absolute;
+  inset-inline: 8%;
+  height: 1px;
+  bottom: 26vh;
+  background: linear-gradient(
+    90deg,
+    transparent 0%,
+    rgb(200 71 89 / 0.32) 22%,
+    rgb(226 104 123 / 0.6) 50%,
+    rgb(200 71 89 / 0.32) 78%,
+    transparent 100%
+  );
+  filter: blur(0.4px);
+  opacity: 0;
+  transition: opacity calc(var(--duration-cinema) * 2) var(--ease-out) 300ms;
+}
+
+.rail[data-rail='2'] {
+  bottom: 15vh;
+  inset-inline: 18%;
+  opacity: 0;
+  transition-delay: 520ms;
+}
+
+.field[data-accented='true'] .rail {
+  opacity: 0.85;
+}
+
+.field[data-accented='true'] .rail[data-rail='2'] {
+  opacity: 0.45;
+}
+
+/* --- level planes --------------------------------------------------------- */
+
+.planes {
+  position: absolute;
+  inset: 0;
+  transform: translate3d(0, calc(var(--parallax-scroll) * -46px), 0);
+  will-change: transform;
+}
 
 .plane {
   position: absolute;
@@ -88,14 +221,16 @@
   opacity: 1;
 }
 
+/* --- atmosphere ----------------------------------------------------------- */
+
 .glow {
   position: absolute;
   top: 50%;
   left: 50%;
-  width: min(34rem, 96vw);
-  height: 20rem;
+  width: min(38rem, 104vw);
+  height: 22rem;
   translate: -50% -50%;
-  background: radial-gradient(50% 50% at 50% 50%, rgb(200 71 89 / 0.14), transparent 72%);
+  background: radial-gradient(50% 50% at 50% 50%, rgb(200 71 89 / 0.15), transparent 72%);
   opacity: 0;
   transition: opacity calc(var(--duration-cinema) * 2.2) var(--ease-out) 400ms;
 }
@@ -118,6 +253,13 @@
   }
 }
 
+/* Holds the eye in the middle, the way the reference footage does. */
+.vignette {
+  position: absolute;
+  inset: 0;
+  background: radial-gradient(120% 88% at 50% 46%, transparent 42%, rgb(4 5 7 / 0.72) 100%);
+}
+
 .grain {
   position: absolute;
   inset: 0;
@@ -126,8 +268,29 @@
   background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='160' height='160'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='.85' numOctaves='3'/%3E%3C/filter%3E%3Crect width='160' height='160' filter='url(%23n)' opacity='.5'/%3E%3C/svg%3E");
 }
 
+/* Depth costs the most on small screens for the least payoff: flatten it. */
+@media (max-width: 47.99rem) {
+  .field {
+    perspective: 700px;
+  }
+
+  .wall {
+    display: none;
+  }
+
+  .floor,
+  .ceiling {
+    height: 46vh;
+  }
+}
+
 @media (prefers-reduced-motion: reduce) {
   .field[data-accented='true'] .glow {
     animation: none;
+  }
+
+  .room,
+  .planes {
+    transform: none;
   }
 }

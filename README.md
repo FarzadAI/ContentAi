@@ -1,11 +1,11 @@
 # طبقه منفی یک
 
-هیرو (Hero) وب‌سایت «طبقه منفی یک» — پلتفرم انتخاب، مقایسه و ارزیابی آموزش.
+وب‌سایت «طبقه منفی یک» — پلتفرم انتخاب، مقایسه و ارزیابی آموزش.
 
 > **کمتر دوره بخر. بهتر انتخاب کن.**
 
-رابط کاربری فارسی، RTL، dark-first و mobile-first؛ همراه با یک Product Preview واقعاً تعاملی
-به‌جای تصویر تزئینی.
+رابط کاربری فارسی، RTL، dark-first و mobile-first: یک Hero سینمایی به‌همراه هفت صفحه‌
+داخلی، با پیشنهاددهنده‌ای که واقعاً کار می‌کند — نه تصویر تزئینی.
 
 ---
 
@@ -48,19 +48,34 @@ CHROMIUM_EXECUTABLE_PATH=/path/to/chromium npm run test:e2e
 
 ```
 src/
+├─ pages/                      Home · Discover · Paths · Courses · GroupBuy · Free · Compare · 404
 ├─ components/
+│  ├─ layout/AppLayout         پس‌زمینه + هدر + فوتر + skip-link
 │  ├─ Hero/                    HeroSection · HeroContent · HeroActions · TrustRow
 │  ├─ RecommendationPreview/   Preview · GoalChips · RecommendationCard · VerdictCard · AdviceCard
-│  ├─ LevelBackground/         لایه‌های عمق ۰ / −۱ / −۲
-│  ├─ NextSectionPeek/         «این هفته ارزش دیدن دارن»
-│  ├─ SiteHeader/
-│  └─ Reveal/                  نمایش مرحله‌ای بر اساس تایم‌لاین
-├─ data/                       داده‌های mock (recommendations, weeklyPicks)
+│  ├─ LevelBackground/         محیط عمق (کف، دیوارها، ریل‌های نور، سطوح ۰/−۱/−۲)
+│  ├─ CourseCard/ · PageHeader/ · NextSectionPeek/ · SiteHeader/ · SiteFooter/ · Reveal/
+├─ data/                       داده mock (catalog, paths, recommendations)
+├─ hooks/                      useRecommendation · usePrefersReducedMotion
 ├─ intro/                      تایم‌لاین کروگرافی + Context
-├─ hooks/                      usePrefersReducedMotion
 ├─ lib/persian.ts              اعداد فارسی
+├─ routes.ts                   مسیرها و آیتم‌های ناوبری
 └─ styles/                     tokens.css · global.css
 ```
+
+### صفحه‌ها
+
+| مسیر | صفحه | تعامل واقعی |
+| --- | --- | --- |
+| `/` | خانه (Hero) | اینترو سینمایی + پیشنهاددهنده |
+| `/discover` | کشف | انتخاب هدف → پیشنهاد + حکم + توصیه |
+| `/paths` | مسیرها | مسیرهای چندقدمی با دلیل ترتیب |
+| `/courses` | دوره‌ها | فیلتر موضوعی روی کاتالوگ |
+| `/group-buy` | خرید گروهی | توضیح مکانیزم + دوره‌های واجد شرایط |
+| `/free` | رایگان‌ها | فهرست رایگان‌های بررسی‌شده |
+| `/compare` | مقایسه | مقایسه دو دوره با علامت‌گذاری برنده هر معیار |
+
+مسیریابی با **HashRouter** است تا سایت روی هاست استاتیک بدون تنظیم rewrite کار کند.
 
 ## تصمیم‌های اصلی
 
@@ -78,6 +93,11 @@ src/
 انیمیت می‌شود. ارتفاع ناحیه نتیجه بر اساس بلندترین پاسخ (اندازه‌گیری‌شده در مرورگر) رزرو شده
 تا تعویض هدف باعث پرش نشود.
 
+**محیط عمق، نه عکس.** پس‌زمینه یک صحنه‌ی پرسپکتیو از gradient و transform است:
+کف و سقف مشبک، دو دیوار محو، ریل‌های نور crimson و وینیت. هیچ بیت‌مپ، هیچ asset سه‌بعدی و
+هیچ زیرزمین literal. با حرکت ماوس و اسکرول، فقط پس‌زمینه پارالاکس می‌گیرد (چند درجه)، آن هم
+با نوشتن مستقیم CSS variable داخل rAF تا رندر React و layout درگیر نشود.
+
 **Reduced motion یک مسیر درجه‌یک است.** با `prefers-reduced-motion` تمام مراحل بلافاصله
 نمایش داده می‌شوند؛ هیچ محتوایی پشت انیمیشن قفل نیست.
 
@@ -88,17 +108,19 @@ src/
 ## وضعیت تست‌ها
 
 - Typecheck / ESLint: پاس
-- Unit: ۱۴ تست
-- E2E (Chromium، دو پروژه mobile/desktop): ۲۰ تست شامل RTL، دسترسی با کیبورد،
-  به‌روزرسانی پیشنهاد، reduced-motion و Visual Regression روی `390×844` و `1440×900`
-- بدون Horizontal Overflow و با `CLS = 0` روی ۳۲۰ / ۳۶۰ / ۳۹۰ / ۴۳۰ / ۷۶۸ / ۱۰۲۴ / ۱۲۸۰ / ۱۴۴۰
+- Unit: ۲۳ تست (Vitest + Testing Library)
+- E2E: ۴۶ تست (Playwright، دو پروفایل mobile/desktop) شامل RTL، ناوبری موبایل،
+  فیلتر کاتالوگ، مقایسه، reduced-motion و Visual Regression
+- بدون Horizontal Overflow و با `CLS = 0` در **همه صفحه‌ها** روی
+  ۳۲۰ / ۳۶۰ / ۳۹۰ / ۴۳۰ / ۷۶۸ / ۱۰۲۴ / ۱۲۸۰ / ۱۴۴۰
 
 ## TODO
 
-- اتصال CTA «برام انتخاب کن» به Wizard واقعی (فعلاً فوکوس روی chipهای هدف).
-- جایگزینی داده‌های mock با API پیشنهاددهنده.
-- Instrumentation رویدادها (کلیک CTA، انتخاب هدف).
+- جایگزینی داده‌های mock با API واقعی (`getRecommendationForGoal` و `COURSES`).
+- ذخیره وضعیت انتخاب کاربر (فعلاً با تغییر صفحه ریست می‌شود).
+- Instrumentation رویدادها (کلیک CTA، انتخاب هدف، فیلتر).
 - تست روی Safari/Firefox (در این محیط فقط Chromium در دسترس بود).
+- پس‌زمینه با CSS ساخته شده؛ اگر رندر سه‌بعدی اختصاصی تهیه شود، جای همین لایه می‌نشیند.
 
 ## License
 
